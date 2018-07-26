@@ -1,0 +1,21 @@
+# depslib dependency file v1.0
+1531421704 source:c:\users\falaniz\desktop\proyectos en c\finallaboratorio\arraylist.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"ArrayList.h"
+
+1531421704 c:\users\falaniz\desktop\proyectos en c\finallaboratorio\arraylist.h
+
+1532638240 source:c:\users\falaniz\desktop\proyectos en c\finallaboratorio\main.c
+	<stdio.h>
+	<stdlib.h>
+	"ArrayList.h"
+	"Funciones.h"
+
+1532638854 c:\users\falaniz\desktop\proyectos en c\finallaboratorio\funciones.h
+	<stdio.h>
+	<stdlib.h>
+	"ArrayList.h"
+	"string.h"
+
