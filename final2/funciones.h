@@ -55,3 +55,4 @@ int buscarDni(ArrayList*,int);
 //punto4
 int crearArchivo(ArrayList*,ArrayList*);
 void filtrar(ArrayList*,ArrayList*);
+int filtrarDni(int,ArrayList*);

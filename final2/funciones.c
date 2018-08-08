@@ -374,30 +374,38 @@ int crearArchivo(ArrayList* lista,ArrayList* listaFiltrada){
 
 void filtrar(ArrayList* lista,ArrayList* listaFiltrada){
     eLlamada* llamada;
-    eLlamada* llamadaAux;
     int flag=1;
-    int tam;
 
     if( lista != NULL && listaFiltrada!= NULL){
+        llamada = newLlamada();
         for (int i=0 ; i<(lista->len(lista)); i++)
         {
             llamada = lista->get(lista, i);
-            int existe=1;
             if(flag==0){
-                tam=listaFiltrada->len(listaFiltrada);
-                for (int j=0 ; j<tam; j++){
-                    llamadaAux = listaFiltrada->get(listaFiltrada, j);
-                    if(getDni(llamada)==getDni(llamadaAux)){
-                        existe=0;
-                    }
+                if(filtrarDni(getDni(llamada),listaFiltrada)){
+                    listaFiltrada->add(listaFiltrada,llamada);
                 }
             }else if(flag==1){
                 listaFiltrada->add(listaFiltrada,llamada);
                 flag=0;
-            }
-            if (existe==1 && flag==0){
-                    listaFiltrada->add(listaFiltrada,llamada);
-            }
+                }
         }
     }
+}
+
+int filtrarDni(int dni,ArrayList* listaFiltrada){
+    int retorno=1;
+    int tam;
+    eLlamada* llamada;
+    llamada = newLlamada();
+
+    tam=listaFiltrada->len(listaFiltrada);
+    for (int i=0 ; i<tam; i++){
+        llamada = listaFiltrada->get(listaFiltrada,i);
+        if(dni==getDni(llamada)){
+            retorno=0;
+            break;
+        }
+    }
+    return retorno;
 }
