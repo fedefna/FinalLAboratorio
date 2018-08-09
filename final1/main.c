@@ -8,6 +8,12 @@ int main()
     ArrayList* listaEntregas;
     listaEntregas=al_newArrayList();
 
+    ArrayList* listaLocalidades;
+    listaLocalidades=al_newArrayList();
+
+    ArrayList* listaNuevoReparto;
+    listaNuevoReparto=al_newArrayList();
+
     int flag=0;
 
     if(listaEntregas != NULL){
@@ -35,7 +41,7 @@ int main()
                 break;
             case 3:
                 if(flag==1){
-
+                    imprimirLocalidades(listaEntregas,listaLocalidades);
                 }else{
                     printf("Primero debe cargar el archivo.\n");
                 }
@@ -43,11 +49,7 @@ int main()
                 break;
             case 4:
                 if(flag==1){
-                    /*if(crearArchivo(listaLlamadas,listaClientes)==0){
-                        printf("Archivo creado con exito!\n");
-                    }else{
-                        printf("Error al crear el archivo.");
-                    }*/
+                    generarArchivo(listaEntregas,listaNuevoReparto);
                 }else{
                     printf("Primero debe cargar el archivo.\n");
                 }

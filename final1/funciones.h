@@ -32,7 +32,7 @@ char* getRecibe(eEntrega*);
 
 //MENU
 int menu();
-int subMenu();
+void pedirLocalidades(char*,char*,char*);
 
 //PARSER
 int parser(ArrayList*, char*);
@@ -42,8 +42,17 @@ int cargarArchivo(ArrayList*);
 //Punto2
 void imprimirEntregas(ArrayList*);
 void imprimirEntrega(eEntrega*);
-/*//punto3
-void imprimirEstadisticas(ArrayList*);
+//punto3
+int filtrarLocalidad(char* localidad,ArrayList* listaLocalidades);
+void crearListaLocalidades(ArrayList* listaEntregas,ArrayList* listaLocalidades);
+void imprimirLocalidad(eEntrega* entrega);
+void imprimirLocalidades(ArrayList* listaEntregas,ArrayList* listaLocalidades);
+//PUNTO4
+void generarArchivo(ArrayList* listaEntregas,ArrayList* listaNuevoReparto);
+int filtrarListaReparto(ArrayList*,ArrayList*,char*);
+int comparar(void*,void*);
+crearNuevoArchivoReparto(ArrayList* listaNuevoReparto);
+/*
 void mostrarProductoMasConsultado(ArrayList*);
 void mostrarPersonaConMasLlamados(ArrayList*);
 int buscarProducto(ArrayList*,char*);

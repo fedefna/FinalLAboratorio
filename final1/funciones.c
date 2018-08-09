@@ -128,19 +128,19 @@ int menu(void)
     return opcion;
 }
 
-int subMenu()
+void pedirLocalidades(char* localidad1,char* localidad2,char* localidad3)
 {
-    int opcion;
-    printf("1. Deposito 1\n");
-    printf("2. Deposito 2\n");
-    printf("\n");
-    scanf("%d", &opcion);
-    while (1>opcion || opcion>2)
-    {
-        printf("La opcion seleccionada no es valida. Intente nuevamente.\n\n");
-        scanf("%d", &opcion);
-    }
-    return opcion;
+    printf("*******GENERAR ARCHIVO DE REPARTO********\n\n");
+    printf("Ingresar las 3 localidades para el archivo:\n");
+    printf("Localidad 1:\n");
+    fflush(stdin);
+    gets(localidad1);
+    printf("Localidad 2:\n");
+    fflush(stdin);
+    gets(localidad2);
+    printf("Localidad 3:\n");
+    fflush(stdin);
+    gets(localidad3);
 }
 
 //PARSER
@@ -217,7 +217,7 @@ int cargarArchivo(ArrayList* lista){
 
     return retorno;
 }
-
+//PUNTO2
 void imprimirEntregas(ArrayList* lista){
     eEntrega* entrega;
     //id,producto,direccion,localidad,recibe
@@ -227,36 +227,49 @@ void imprimirEntregas(ArrayList* lista){
         for (int i=0 ; i<(lista->len(lista)); i++)
         {
             entrega = lista->get(lista, i);
-            imprimirLlamada(entrega);
+            imprimirEntrega(entrega);
         }
     }
 }
 
-void imprimirLlamada(eEntrega* entrega){
+void imprimirEntrega(eEntrega* entrega){
     printf("%d  %10s  %10s  %10s  %10s\n", getId(entrega),getProducto(entrega),getDireccion(entrega),getLocalidad(entrega),getRecibe(entrega));
 }
-
+//PUNTO3
 void imprimirLocalidades(ArrayList* listaEntregas,ArrayList* listaLocalidades){
-
+    crearListaLocalidades(listaEntregas,listaLocalidades);
+    eEntrega* entrega;
+    //id,producto,direccion,localidad,recibe
+    if (listaEntregas != NULL  && listaLocalidades!=NULL)
+    {
+        printf("LOCALIDADES\n\n");
+        for (int i=0 ; i<(listaLocalidades->len(listaLocalidades)); i++)
+        {
+            entrega = listaLocalidades->get(listaLocalidades, i);
+            imprimirLocalidad(entrega);
+        }
+    }
 }
 
-void crearListaLocalidades(){
+void imprimirLocalidad(eEntrega* entrega){
+    printf("%s\n",getLocalidad(entrega));
+}
+
+void crearListaLocalidades(ArrayList* listaEntregas,ArrayList* listaLocalidades){
     int flag=0;
     eEntrega* aux;
     aux=newEntrega();
 
     if(listaEntregas!=NULL && listaLocalidades!=NULL){
-        if(listaEntregas!=NULL && listaLocalidades!=NULL){
-            for(int i=0; i<listaEntregas->len(listaEntregas),i++){
-                aux=listaEntregas->get(listaEntregas,i);
-                if(flag=1){
-                    if(filtrarLocalidad(getLocalidad(aux),listaLocalidades)){
-                        listaLocalidades->add(listaLocalidades,aux);
-                    }
-                }else if(flag==0){
+        for(int i=0; i<listaEntregas->len(listaEntregas);i++){
+            aux=listaEntregas->get(listaEntregas,i);
+            if(flag=1){
+                if(filtrarLocalidad(getLocalidad(aux),listaLocalidades)){
                     listaLocalidades->add(listaLocalidades,aux);
-                    flag=1;
                 }
+            }else if(flag==0){
+                listaLocalidades->add(listaLocalidades,aux);
+                flag=1;
             }
         }
     }
@@ -268,7 +281,7 @@ int filtrarLocalidad(char* localidad,ArrayList* listaLocalidades){
     aux=newEntrega();
 
     if(localidad!=NULL && listaLocalidades!=NULL){
-        for(int i=0, i<listaLocalidades->len(listaLocalidades),i++){
+        for(int i=0; i<listaLocalidades->len(listaLocalidades);i++){
            aux=listaLocalidades->get(listaLocalidades,i);
            if(strcmp(localidad,getLocalidad(aux))==0){
                 retorno=0;
@@ -278,158 +291,90 @@ int filtrarLocalidad(char* localidad,ArrayList* listaLocalidades){
     }
     return retorno;
 }
+//PUNTO4
+void generarArchivo(ArrayList* listaEntregas,ArrayList* listaNuevoReparto){
+    char* localidad1;
+    char* localidad2;
+    char* localidad3;
+    localidad1=(char*) malloc(sizeof(char)*40);
+    localidad2=(char*) malloc(sizeof(char)*40);
+    localidad3=(char*) malloc(sizeof(char)*40);
+    if(localidad1!=NULL && localidad2!=NULL && localidad3!=NULL){
+        pedirLocalidades(localidad1,localidad2,localidad3);
+    }
+    avisarIngreso(listaEntregas,listaNuevoReparto,localidad1);
+    avisarIngreso(listaEntregas,listaNuevoReparto,localidad2);
+    avisarIngreso(listaEntregas,listaNuevoReparto,localidad3);
 
-/*void imprimirEstadisticas(ArrayList* lista){
-    mostrarProductoMasConsultado(lista);
-    mostrarPersonaConMasLlamados(lista);
+    listaNuevoReparto->sort(listaNuevoReparto,comparar,1);
+
+    if (crearNuevoArchivoReparto(listaNuevoReparto)==0){
+        printf("Nuevo archivo de reparto creado con exito!\n");
+    }else{
+        printf("Error al crear archivo\n");
+    }
 }
 
-void mostrarProductoMasConsultado(ArrayList* lista){
-    eLlamada* llamada;
+void avisarIngreso(ArrayList* listaEntregas,ArrayList* listaNuevoReparto,char* localidad){
+    if(filtrarListaReparto(listaEntregas,listaNuevoReparto,localidad)){
+        printf("La localidad %s fue ingresada al nuevo reparto.\n",localidad);
+    }else{
+        printf("La localidad %s no existe en el archivo de reparto.\n",localidad);
+    }
+}
 
-    char auxProducto[40];
-    int auxConsultas=0;
-    char producto[40];
-    int consultasMax=0;
-    if (lista != NULL)
-    {
-        for (int i=0 ; i<(lista->len(lista)); i++)
-        {
-            llamada = lista->get(lista, i);
-            strcpy(auxProducto,getIdProducto(llamada));
-            auxConsultas=buscarProducto(lista,auxProducto);
-            if(auxConsultas>consultasMax){
-                strcpy(producto,auxProducto);
-                consultasMax=auxConsultas;
+int filtrarListaReparto(ArrayList* listaEntregas,ArrayList* listaNuevoReparto,char* localidad){
+    int retorno=0;
+    eEntrega* aux;
+    aux=newEntrega();
+
+    if(listaEntregas!=NULL && listaNuevoReparto!=NULL && localidad!=NULL){
+        for(int i=0; i<listaEntregas->len(listaEntregas);i++){
+            aux=listaEntregas->get(listaEntregas,i);
+            if(stricmp(localidad,getLocalidad(aux))==0){
+                listaNuevoReparto->add(listaNuevoReparto,aux);
+                retorno=1;
             }
         }
     }
-    printf("Producto mas consultado: %s\n",producto);
+    return retorno;
 }
 
-int buscarProducto(ArrayList* lista, char* idProducto){
-    eLlamada* llamada;
-    int contador=0;
-    if (lista != NULL)
-    {
-        for (int i=0 ; i<(lista->len(lista)); i++)
-        {
-            llamada = lista->get(lista, i);
-            if(strcmp(idProducto,getIdProducto(llamada))==0){
-                contador++;
-            }
-        }
+int comparar(void* entrega1, void* entrega2){
+    int retorno = 0;
+
+    if(strcmp(((eEntrega*)entrega1)->localidad, ((eEntrega*)entrega2)->localidad) < 0){
+        retorno = 1;
     }
-    return contador;
+    if(strcmp(((eEntrega*)entrega1)->localidad, ((eEntrega*)entrega2)->localidad) > 0){
+        retorno =  -1;
+    }
 }
 
-void mostrarPersonaConMasLlamados(ArrayList* lista){
-    eLlamada* llamada;
-
-    int auxDni;
-    char nombre[40];
-    int dni;
-    int cantLlamados=0;
-    int llamadosMax=0;
-    if (lista != NULL)
-    {
-        for (int i=0 ; i<(lista->len(lista)); i++)
-        {
-            llamada = lista->get(lista, i);
-            auxDni=getDni(llamada);
-            cantLlamados=buscarDni(lista,auxDni);
-            if(cantLlamados>llamadosMax){
-                strcpy(nombre,getNombre(llamada));
-                dni=auxDni;
-                llamadosMax=cantLlamados;
-            }
-        }
-    }
-    printf("Persona con mas llamados:\n Nombre: %s\n Dni: %d\n",nombre,dni);
-}
-
-int buscarDni(ArrayList* lista, int dni){
-    eLlamada* llamada;
-    int contador=0;
-    if (lista != NULL)
-    {
-        for (int i=0 ; i<(lista->len(lista)); i++)
-        {
-            llamada = lista->get(lista, i);
-            if(dni==getDni(llamada)){
-                contador++;
-            }
-        }
-    }
-    return contador;
- }
-
-int crearArchivo(ArrayList* lista,ArrayList* listaFiltrada){
+int crearNuevoArchivoReparto(ArrayList* listaNuevoReparto){
     int retorno=-1;
     FILE* f;
     int tam;
-    eLlamada* llamada;
+    eEntrega* entrega;
 
-    if( lista != NULL && listaFiltrada!= NULL){
-       f = fopen("clientes.csv", "w");
+    if( listaNuevoReparto != NULL){
+       f = fopen("nuevoReparto.csv", "w");
 
         if(f != NULL)
         {
             retorno = 0;
 
-            filtrar(lista,listaFiltrada);
-            tam = listaFiltrada->len(listaFiltrada);
+            tam = listaNuevoReparto->len(listaNuevoReparto);
             for(int i=0 ; i<tam ; i++)
             {
                 if(i==0){
-                    fprintf(f,"DNI,NOMBRE,EMAIL\n");
+                    fprintf(f,"ID,PRODUCTO,DIRECCION,LOCALIDAD,RECIBE\n");
                 }
-                llamada = listaFiltrada->get(listaFiltrada, i);
-                fprintf(f,"%d,", getDni(llamada));
-                fprintf(f,"%s,", getNombre(llamada));
-                fprintf(f,"%s\n", getEmail(llamada));
+                entrega = listaNuevoReparto->get(listaNuevoReparto, i);
+                fprintf(f,"%d,%s,%s,%s,%s\n", getId(entrega),getProducto(entrega),getDireccion(entrega),getLocalidad(entrega),getRecibe(entrega));
             }
         }
         fclose(f);
     }
     return retorno;
 }
-
-void filtrar(ArrayList* lista,ArrayList* listaFiltrada){
-    eLlamada* llamada;
-    int flag=1;
-
-    if( lista != NULL && listaFiltrada!= NULL){
-        llamada = newLlamada();
-        for (int i=0 ; i<(lista->len(lista)); i++)
-        {
-            llamada = lista->get(lista, i);
-            if(flag==0){
-                if(filtrarDni(getDni(llamada),listaFiltrada)){
-                    listaFiltrada->add(listaFiltrada,llamada);
-                }
-            }else if(flag==1){
-                listaFiltrada->add(listaFiltrada,llamada);
-                flag=0;
-                }
-        }
-    }
-}
-
-int filtrarDni(int dni,ArrayList* listaFiltrada){
-    int retorno=1;
-    int tam;
-    eLlamada* llamada;
-    llamada = newLlamada();
-
-    tam=listaFiltrada->len(listaFiltrada);
-    for (int i=0 ; i<tam; i++){
-        llamada = listaFiltrada->get(listaFiltrada,i);
-        if(dni==getDni(llamada)){
-            retorno=0;
-            break;
-        }
-    }
-    return retorno;
-}
-*/
